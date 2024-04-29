@@ -1,0 +1,17 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "nbgrader-k8s-exchange"
+version = "0.0.1"
+description = "K8s compatibe exchange for nbgrader"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+
+dependencies = [
+  "nbgrader==0.9.1",
+]
