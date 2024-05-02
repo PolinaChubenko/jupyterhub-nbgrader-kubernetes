@@ -404,14 +404,14 @@ jupyterhub:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
-    lifecycleHooks:
-      postStart:
-        exec:
-          command:
-            - 'bash'
-            - '-c'
-            - >
-              echo -e "envs_dirs:\n  - /home/jovyan/my-conda-envs/" > /home/jovyan/.condarc;
+    # lifecycleHooks:
+    #   postStart:
+    #     exec:
+    #       command:
+    #         - 'bash'
+    #         - '-c'
+    #         - >
+    #           echo -e "envs_dirs:\n  - /home/jovyan/my-conda-envs/" > /home/jovyan/.condarc;
 
   scheduling:
     userScheduler:
