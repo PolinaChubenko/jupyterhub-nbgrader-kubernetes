@@ -1,4 +1,4 @@
-FROM jupyter/minimal-notebook:hub-4.0.2
+FROM quay.io/jupyter/minimal-notebook:hub-4.1.3
 USER root
 RUN apt-get update && apt install -y vim procps
 
@@ -7,13 +7,14 @@ RUN chown -R ${NB_USER} /mnt/exchange
 RUN chmod -R 755 /mnt/exchange
 
 # Install nbgrader and nbgrader-exchange release
-RUN pip install nbgrader
-RUN pip install https://github.com/PolinaChubenko/jupyterhub-nbgrader-kubernetes/releases/download/v0.0.1/nbgrader_k8s_exchange-0.0.1.tar.gz
+RUN pip install nbgrader==0.9.2
+COPY nbgrader-exchange/dist/nbgrader_k8s_exchange-0.0.1-py3-none-any.whl /
+RUN pip install /nbgrader_k8s_exchange-0.0.1-py3-none-any.whl
 
 # Install packages for python kernel
 RUN pip install jiwer --no-cache-dir
 RUN pip install gradio typing-extensions --no-cache-dir
-RUN pip install torch torchvision --no-cache-dir
+# RUN pip install torch torchvision --no-cache-dir
 RUN pip install seaborn --no-cache-dir
 
 # Setup nbgrader extensions
