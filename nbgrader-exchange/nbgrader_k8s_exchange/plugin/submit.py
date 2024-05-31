@@ -13,6 +13,9 @@ from traitlets import Bool
 from .exchange import Exchange
 from nbgrader.utils import get_username, check_mode, find_all_notebooks
 
+import requests
+from requests.exceptions import HTTPError
+
 
 class ExchangeSubmit(Exchange, ABCExchangeSubmit):
 
@@ -46,11 +49,11 @@ class ExchangeSubmit(Exchange, ABCExchangeSubmit):
             # An explicit student id has been specified on the command line; we use it as student_id
             if '*' in self.coursedir.student_id or '+' in self.coursedir.student_id:
                 self.fail("The student ID should contain no '*' nor '+'; got {}".format(self.coursedir.student_id))
-            student_id = self.coursedir.student_id
+            self.student_id = self.coursedir.student_id
         else:
-            student_id = get_username()
+            self.student_id = get_username()
 
-        self.inbound_path = os.path.join(self.root, self.coursedir.course_id, 'inbound', student_id)
+        self.inbound_path = os.path.join(self.root, self.coursedir.course_id, 'inbound', self.student_id)
         self.ensure_directory(
             self.inbound_path,
             S_ISGID|S_IRUSR|S_IWUSR|S_IXUSR|S_IWGRP|S_IXGRP|S_IWOTH|S_IXOTH|(S_IRGRP if self.coursedir.groupshared else 0)
@@ -59,10 +62,10 @@ class ExchangeSubmit(Exchange, ABCExchangeSubmit):
         if self.add_random_string:
             random_str = base64.urlsafe_b64encode(os.urandom(9)).decode('ascii')
             self.assignment_filename = '{}+{}+{}+{}'.format(
-                student_id, self.coursedir.assignment_id, self.timestamp, random_str)
+                self.student_id, self.coursedir.assignment_id, self.timestamp, random_str)
         else:
             self.assignment_filename = '{}+{}+{}'.format(
-                student_id, self.coursedir.assignment_id, self.timestamp)
+                self.student_id, self.coursedir.assignment_id, self.timestamp)
 
     def init_release(self):
         if self.coursedir.course_id == '':
@@ -158,3 +161,38 @@ class ExchangeSubmit(Exchange, ABCExchangeSubmit):
         self.log.info("Submitted as: {} {} {}".format(
             self.coursedir.course_id, self.coursedir.assignment_id, str(self.timestamp)
         ))
+
+        manager_url = "http://manager:8080"
+        # call collect via manager
+        collect_url = manager_url + f"/collect/{self.coursedir.course_id}/{self.coursedir.assignment_id}"
+
+        try:
+            response = requests.post(collect_url)
+            response.raise_for_status()
+        except HTTPError as http_err:
+            self.log.error(f"HTTP error occurred in accessing manager: {http_err}")
+        except Exception as err:
+            self.log.error(f"Other error occurred in accessing manager: {err}")
+        else:
+            json_response = response.json()
+            if json_response['success']:
+                self.log.info(json_response["log"])
+            else: 
+                self.log.error(json_response["log"])
+
+        # call autograde via manager
+        autograde_url = manager_url + f"/autograde/{self.coursedir.course_id}/{self.coursedir.assignment_id}/{self.student_id}"
+
+        try:
+            response = requests.post(autograde_url)
+            response.raise_for_status()
+        except HTTPError as http_err:
+            self.log.error(f"HTTP error occurred in accessing manager: {http_err}")
+        except Exception as err:
+            self.log.error(f"Other error occurred in accessing manager: {err}")
+        else:
+            json_response = response.json()
+            if json_response['success']:
+                self.log.info(json_response["log"])
+            else: 
+                self.log.error(json_response["log"])
