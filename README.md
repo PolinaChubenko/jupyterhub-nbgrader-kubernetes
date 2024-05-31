@@ -72,12 +72,20 @@ To switch to another cluster, enter: `kubectl config use-context kind-kind`
 
 
 ## Start k8s cluster and run JupyterHub with nbgrader
-Basically, there are 2 bash scripts:
+Basically, there are 3 bash scripts:
 - `install.sh` that starts cluster with all the setup (run at the begining)
 - `update.sh` that updates nbgrader-chart (run after changing values.yaml)
+- `manager_install.sh` that starts manager to automatically collect and autograde assignments 
 
 ### First run
-Do
+Go to nbgrader-exchange directory to build the plugin
+```
+cd nbgrader-exchange/
+python3 -m build
+```
+This should create `.whl` file in `nbgrader-exchange/dist`
+
+Then we need to start the cluster with JupyterHub
 ```
 chmod +x install.sh
 ./install.sh
@@ -86,4 +94,13 @@ After instalation we need to make our cluster accessable externally.
 As in values.yaml we say cluster to be deployed on port 30080, use nginx and set the following
 ```
 proxy_pass http://192.168.49.2:30080;
+```
+Next, we need to get admin api_token for manager to work, so go to `/hub/admin` and generate it. Then save it in `.env` file in manager directory like this
+```
+ADMIN_TOKEN=<very-secret-key>
+```
+Finally, start the manager service 
+```
+chmod +x install.sh
+./manager_install.sh
 ```
