@@ -187,10 +187,11 @@ jupyterhub:
             groups.append(n.name)
           namespace = spawner.namespace
           username = spawner.user.name
+          spawner.user.name = spawner.user.name.replace('.', '-')
 
           spawner.start_timeout = 600
 
-          await mount_persistent_hub_home(spawner, username, namespace)
+          await mount_persistent_hub_home(spawner, spawner.user.name, namespace)
 
           isStudent = True
           volume = {"name": "nbgrader-exchange", "persistentVolumeClaim": {"claimName": "nbgrader-exchange"}}
@@ -297,6 +298,7 @@ jupyterhub:
         # If any more admins, existing ones must set as admin in UI
         # Changes will disappear if db disappears
         admin_users:
+          - 'polina.chubenko'
           - 'admin'
         allow_all: true
       DummyAuthenticator:
