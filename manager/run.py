@@ -2,11 +2,8 @@ from flask import Flask
 import requests
 from requests.exceptions import HTTPError
 
-from dotenv import load_dotenv
 import os
 import logging
-
-load_dotenv()
 
 admin_token = os.getenv("ADMIN_TOKEN")
 

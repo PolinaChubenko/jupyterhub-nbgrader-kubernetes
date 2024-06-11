@@ -18,6 +18,12 @@ spec:
       - name: manager
         image: flask-manager-sample:0.0.1
         imagePullPolicy: Never
+        env:
+          - name: ADMIN_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: manager-token-secret
+                key: token
         ports:
         - containerPort: 5000
           protocol: TCP

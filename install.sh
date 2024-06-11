@@ -9,6 +9,7 @@ eval $(minikube docker-env)
 docker build -f images/student.Dockerfile -t nbgrader-student-sample:0.0.1 .
 docker build -f images/instructor.Dockerfile -t nbgrader-instructor-sample:0.0.1 .
 docker build -f images/hub.Dockerfile -t nbgrader-hub-sample:0.0.1 .
+docker build -f images/flask_manager.Dockerfile -t flask-manager-sample:0.0.1 .
 eval $(minikube docker-env -u)
 
 # Update dependencies and install the chart
