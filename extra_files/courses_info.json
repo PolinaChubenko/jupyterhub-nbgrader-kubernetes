@@ -1,0 +1,12 @@
+{
+  "course1": [
+    "instructor1",
+    "instructor2"
+  ],
+  "course2": [
+    "instructor1"
+  ],
+  "course3": [
+    "instructor2"
+  ]
+}
