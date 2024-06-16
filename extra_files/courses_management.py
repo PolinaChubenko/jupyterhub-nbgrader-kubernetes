@@ -25,6 +25,10 @@ PVC_STORAGE_CLASS = "standard"
 with open('/usr/local/etc/jupyterhub/jupyterhub_config.d/courses_info.json') as file:
     COURSES = json.load(file)
 
+# Define students of the courses
+with open('/usr/local/etc/jupyterhub/jupyterhub_config.d/students_info.json') as file:
+    STUDENTS = json.load(file)
+
 def userdata_hook(spawner, auth_state):
     spawner.userdata = auth_state
 
@@ -197,7 +201,7 @@ for course, instructors in COURSES.items():
         }
     )
 
-    groupsToCreate[f"nbgrader-{course}"] = [] # students are added here
+    groupsToCreate[f"nbgrader-{course}"] = STUDENTS[course]
     groupsToCreate[f"formgrade-{course}"] = instructors
 
     c.JupyterHub.load_roles.append({

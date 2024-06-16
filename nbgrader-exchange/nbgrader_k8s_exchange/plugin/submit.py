@@ -196,3 +196,20 @@ class ExchangeSubmit(Exchange, ABCExchangeSubmit):
                 self.log.info(json_response["log"])
             else: 
                 self.log.error(json_response["log"])
+
+        # call checker via manager
+        checker_url = manager_url + f"/send_checker/{self.coursedir.course_id}/{self.coursedir.assignment_id}/{self.student_id}"
+
+        try:
+            response = requests.post(checker_url)
+            response.raise_for_status()
+        except HTTPError as http_err:
+            self.log.error(f"HTTP error occurred in accessing manager: {http_err}")
+        except Exception as err:
+            self.log.error(f"Other error occurred in accessing manager: {err}")
+        else:
+            json_response = response.json()
+            if json_response['success']:
+                self.log.info(json_response["log"])
+            else: 
+                self.log.error(json_response["log"])

@@ -50,6 +50,8 @@ jupyterhub:
         mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/02_config.py
       courses_info_json:
         mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/courses_info.json
+      students_info_json:
+        mountPath: /usr/local/etc/jupyterhub/jupyterhub_config.d/students_info.json
 
     config:
       Authenticator:
